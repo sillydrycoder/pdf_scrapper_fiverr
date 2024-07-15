@@ -45,9 +45,9 @@ This project is a Tkinter-based desktop application that automates the process o
 
 ```sh
 
-git clone https://github.com/your-repo-url/pdf-scrapper.git
+git clone https://github.com/tensor35/pdf_scrapper_fiverr.git
 
-cd pdf-scrapper
+cd pdf_scapper_fiverr
 
 ```
 
