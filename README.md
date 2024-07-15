@@ -24,12 +24,12 @@ This project is a Tkinter-based desktop application that automates the process o
   
 
 ## Requirements
+> ### No further requirements if you have an .exe file.
 
-  
 
 - Python 3.x
 
-- Required Python packages: `selenium`, `twocaptcha`, `tkinter`
+- Required Python packages: `selenium`, `twocaptcha`, `tkinter`, `pyinstaller`
 
 - Simple Chrome Installation ***`Compulsory`***
 
@@ -39,7 +39,9 @@ This project is a Tkinter-based desktop application that automates the process o
 
 ## Installation
 
-  
+> ### Windows Executable (.exe):
+> https://github.com/tensor35/pdf_scrapper_fiverr/releases/tag/Windows
+
 
 1.  **Clone the repository**:
 
