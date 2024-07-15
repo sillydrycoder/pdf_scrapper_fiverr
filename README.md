@@ -24,16 +24,14 @@ This project is a Tkinter-based desktop application that automates the process o
   
 
 ## Requirements
+
+- Simple Chrome Installation ***`Compulsory`***
+
 > ### No further requirements if you have an .exe file.
-
-
 - Python 3.x
 
 - Required Python packages: `selenium`, `twocaptcha`, `tkinter`, `pyinstaller`
 
-- Simple Chrome Installation ***`Compulsory`***
-
-`
 
   
 
