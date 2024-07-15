@@ -78,6 +78,7 @@ The application requires a 2Captcha API key to function. This can be configured 
   
 
 1.  **Via the GUI**: The application will prompt you to enter the API key the first time it runs.
+> ***This step can be skipped. Script will ask for api key on initial execution***
 
 2.  **Manually**: Create a `config.json` file in the root directory with the following content:
 
@@ -93,8 +94,6 @@ The application requires a 2Captcha API key to function. This can be configured 
 
   
 
-> ***This step can be skipped. Script will ask for api key on initial
-> execution***
 
   
 
