@@ -45,9 +45,9 @@ This project is a Tkinter-based desktop application that automates the process o
 
 ```sh
 
-git clone https://github.com/your-repo-url/pdf-scrapper.git
+git clone https://github.com/tensor35/pdf_scrapper_fiverr.git
 
-cd pdf-scrapper
+cd pdf_scapper_fiverr
 
 ```
 
@@ -78,7 +78,6 @@ The application requires a 2Captcha API key to function. This can be configured 
   
 
 1.  **Via the GUI**: The application will prompt you to enter the API key the first time it runs.
-> ***This step can be skipped. Script will ask for api key on initial execution***
 
 2.  **Manually**: Create a `config.json` file in the root directory with the following content:
 
