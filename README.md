@@ -5,7 +5,9 @@
 
 This project is a Tkinter-based desktop application that automates the process of downloading PDFs from multiple URLs, bypassing CAPTCHA challenges using the 2Captcha service.
 
-  
+## Known Issue
+
+Loading progress and counter glitch.
 
 ## Features
 
@@ -20,6 +22,8 @@ This project is a Tkinter-based desktop application that automates the process o
 -  **Headless Browser Option**: Ability to run the browser in headless mode for a seamless experience.
 
 -  **Customizable**: Easily add new functionalities or modify existing ones.
+
+- **Multi-Threading**: Can process more than one tread at a time.
 
   
 
