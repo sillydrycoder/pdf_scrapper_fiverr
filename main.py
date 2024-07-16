@@ -113,8 +113,8 @@ class CaptchaSolverApp:
         # Headless label and checkbox
         self.headless_label = tk.Label(credits_frame, text="Show browser automation")
         self.headless_label.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
-
-        self.headless_var = tk.IntVar()
+        
+        self.headless_var = tk.BooleanVar()
         self.headless_checkbox = tk.Checkbutton(credits_frame, variable=self.headless_var)
         self.headless_checkbox.pack(side=tk.RIGHT, padx=(10, 0), pady=10)
         
@@ -140,8 +140,8 @@ class CaptchaSolverApp:
         logger.addHandler(log_handler)
 
     def open_github(self):
-            import webbrowser
-            webbrowser.open("https://github.com/your-repo-url")
+        import webbrowser
+        webbrowser.open("https://github.com/your-repo-url")
 
     def select_file(self):
         self.file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
@@ -228,6 +228,8 @@ class CaptchaSolverApp:
             'plugins.always_open_pdf_externally': True
         }
         chrome_options.add_experimental_option('prefs', prefs)
+        if not self.headless_var.get():
+            chrome_options.add_argument("--headless=new")
 
         # Initialize the Chrome driver
         try:
