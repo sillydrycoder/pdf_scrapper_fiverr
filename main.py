@@ -10,6 +10,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from twocaptcha import TwoCaptcha, ValidationException, NetworkException, ApiException, TimeoutException
 import time
+import concurrent.futures
+
 
 # Configure logging
 log_file = 'script.log'
@@ -39,7 +41,7 @@ class CaptchaSolverApp:
     def __init__(self, root):
         self.root = root
         self.root.title("PDF Scrapper")
-        self.root.geometry("500x400")
+        self.root.geometry("500x500")
 
         self.file_path = ""
         self.urls = []
@@ -97,6 +99,26 @@ class CaptchaSolverApp:
         self.progress_bar = ttk.Progressbar(progress_frame, orient='horizontal', length=300, mode='determinate')
         self.progress_bar.pack(side=tk.LEFT, expand=True, padx=(0, 5), pady=10)
         
+        # Configuration frame
+        config_frame = tk.Frame(self.root)
+        config_frame.pack(pady=10, fill=tk.X)
+        
+        # thread count spinbox
+        self.thread_count_label = tk.Label(config_frame, text="Thread count:")
+        self.thread_count_label.pack(side=tk.LEFT, padx=(10, 0), pady=10)
+        
+        self.thread_count_var = tk.IntVar(value=5)
+        self.thread_count_spinbox = tk.Spinbox(config_frame, from_=1, to=10, textvariable=self.thread_count_var)
+        self.thread_count_spinbox.pack(side=tk.LEFT, padx=(0, 10), pady=10)
+        
+        # Headless label and checkbox
+        self.headless_label = tk.Label(config_frame, text="Show browser automation")
+        self.headless_label.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
+        
+        self.headless_var = tk.BooleanVar()
+        self.headless_checkbox = tk.Checkbutton(config_frame, variable=self.headless_var)
+        self.headless_checkbox.pack(side=tk.RIGHT, padx=(10, 0), pady=10)
+        
         # Tool credits frame
         credits_frame = tk.Frame(self.root)
         credits_frame.pack(pady=10, fill=tk.X)
@@ -109,14 +131,6 @@ class CaptchaSolverApp:
         github_link = tk.Label(credits_frame, text="credits @tensor35", fg="blue", cursor="hand2")
         github_link.pack(side=tk.LEFT, padx=(0, 10), pady=10)
         github_link.bind("<Button-1>", lambda e: self.open_github())
-
-        # Headless label and checkbox
-        self.headless_label = tk.Label(credits_frame, text="Show browser automation")
-        self.headless_label.pack(side=tk.RIGHT, padx=(0, 10), pady=10)
-        
-        self.headless_var = tk.BooleanVar()
-        self.headless_checkbox = tk.Checkbutton(credits_frame, variable=self.headless_var)
-        self.headless_checkbox.pack(side=tk.RIGHT, padx=(10, 0), pady=10)
         
         # Log frame
         log_frame = tk.Frame(self.root)
@@ -168,26 +182,34 @@ class CaptchaSolverApp:
         self.cancel_button.config(state=tk.DISABLED)
         self.cancel_button.config(text="Cancelling...")
         logger.info("Cancelled scraping.")
+        
+    def batch_urls(self, urls, batch_size=5):
+        for i in range(0, len(urls), batch_size):
+            yield urls[i:i + batch_size]
 
     def start_scraping(self):
         self.is_cancelled = False
         self.current_url_index = 0
         self.progress_bar.config(value=0)
-
-        thread = threading.Thread(target=self.scrape_urls)
-        thread.start()
+        threading.Thread(target=self.scrape_urls).start()
 
     def scrape_urls(self):
-        for index, url in enumerate(self.urls):
-            if self.is_cancelled:
-                self.submit_button.config(state=tk.NORMAL)
-                self.cancel_button.config(text="Cancel")
-                break
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.thread_count_var.get()) as executor:
+            futures = {executor.submit(self.scrape_url, url): url for url in self.urls}
 
-            self.current_url_index = index + 1
-            self.progress_label.config(text=f"Progress: {self.current_url_index}/{len(self.urls)}")
-            self.progress_bar.config(value=self.current_url_index)
-            self.scrape_url(url)
+            for future in concurrent.futures.as_completed(futures):
+                if self.is_cancelled:
+                    break
+
+                url = futures[future]
+                try:
+                    future.result()
+                except Exception as e:
+                    logger.error(f"Error scraping URL {url}: {e}")
+
+                self.current_url_index += 1
+                self.progress_label.config(text=f"Progress: {self.current_url_index}/{len(self.urls)}")
+                self.progress_bar.config(value=self.current_url_index)
 
         if not self.is_cancelled:
             messagebox.showinfo("Info", "Scraping completed.")
@@ -195,7 +217,8 @@ class CaptchaSolverApp:
             messagebox.showinfo("Info", "Scraping cancelled.")
         self.submit_button.config(state=tk.NORMAL)
         self.cancel_button.config(text="Cancel")
-
+        
+        
     def solve_captcha(self, base64_image):
         try:
             result = self.solver.normal(base64_image)
